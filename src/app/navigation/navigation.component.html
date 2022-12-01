@@ -1,0 +1,120 @@
+<div
+  class="
+    h-screen
+    dark:bg-gray-900
+    bg-gray-300
+    transition-all
+    duration-300
+    space-y-2
+    sm:relative
+    top-0
+    left-0
+    flex flex-col
+    justify-between
+  "
+  [ngClass]="{ 'w-24': !fullSidebar, 'w-64': fullSidebar }"
+>
+  <div class="px-4 space-y-2">
+    <h1 class="text-white font-black py-4 text-2xl px-4 uppercase" routerLink="/">Logo</h1>
+    <!-- SideBar Toggle -->
+    <button
+      class="hidden sm:block focus:outline-none absolute -right-2.5 top-10 bg-gray-900 rounded-full shadow-md"
+      (click)="fullSidebar = !fullSidebar"
+    >
+      <mat-icon aria-hidden="false" class="text-base text-gray-200" aria-label="Example home icon">
+        {{ fullSidebar ? "chevron_left" : "chevron_right" }}
+      </mat-icon>
+    </button>
+
+    <div class="relative" *ngFor="let item of menuTop">
+      <div
+        class="nav-item"
+        [ngClass]="{ 'sm:justify-center': !fullSidebar, 'justify-start': fullSidebar }"
+        [ngClass]="{ 'justify-between': item.counter || item.children }"
+        routerLinkActive="active"
+        [routerLink]="item.url"
+        (click)="item.children ? toggle(item.name) : null"
+      >
+        <div class="flex items-center space-x-2">
+          <mat-icon aria-hidden="false" aria-label="Example home icon">{{ item.iconDark }}</mat-icon>
+          <h1 [ngClass]="{ 'sm:hidden': !fullSidebar, show: fullSidebar }">{{ item.name }}</h1>
+        </div>
+
+        <div class="flex items-center space-x-2" *ngIf="fullSidebar">
+          <div
+            *ngIf="item.counter"
+            [ngClass]="{ 'sm:hidden': !fullSidebar }"
+            class="w-5 h-5 p-1 bg-green-400 rounded-sm text-sm leading-3 text-center text-gray-900"
+          >
+            {{ item.counter }}
+          </div>
+          <mat-icon *ngIf="item.children" aria-hidden="false" aria-label="Example home icon">arrow_drop_down</mat-icon>
+        </div>
+      </div>
+
+      <ng-container *ngIf="item.children">
+        <div
+          [ngClass]="{ expandedClass: fullSidebar, shrinkedClass: !fullSidebar }"
+          class="text-gray-400 space-y-3 border-l border-gray-400 ml-4 pl-6 w-auto"
+          *ngIf="menuState.get(item.name)"
+        >
+          <div
+            *ngFor="let children of item.children"
+            class="hover:text-gray-200 cursor-pointer p-2"
+            routerLinkActive="active"
+            [routerLink]="children.url"
+          >
+            {{ children.name }}
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="px-4 pb-6 space-y-2">
+    <!-- Logout -->
+    <div class="nav-item" [ngClass]="{ 'sm:justify-center': !fullSidebar, 'justify-start': fullSidebar }">
+      <mat-icon aria-hidden="false" aria-label="Example home icon">logout</mat-icon>
+      <h1 [ngClass]="{ 'sm:hidden': !fullSidebar, show: fullSidebar }">Logout</h1>
+    </div>
+
+    <!-- Language Switch -->
+    <div
+      class="nav-item justify-between"
+      [ngClass]="{ 'sm:justify-center': !fullSidebar, 'justify-start': fullSidebar }"
+    >
+      <div class="flex">
+        <mat-icon aria-hidden="false" aria-label="Example home icon">flag</mat-icon>
+
+        <h1 class="pl-2" [ngClass]="{ 'sm:hidden': !fullSidebar, show: fullSidebar }">
+          {{ translate.currentLang }}
+
+          <span
+            class="px-3 cursor-pointer border-2 m-1"
+            *ngFor="let lang of translate.getLangs()"
+            (click)="onLanguageChange(lang)"
+          >
+            {{ lang }}
+          </span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- Theme Switch -->
+    <div
+      class="nav-item justify-between"
+      [ngClass]="{ 'sm:justify-center': !fullSidebar, 'justify-start': fullSidebar }"
+      (click)="onThemeToggle()"
+    >
+      <div class="flex">
+        <mat-icon aria-hidden="false" aria-label="Example home icon">
+          {{ mode === "dark" ? "dark_mode" : "light_mode" }}
+        </mat-icon>
+
+        <h1 class="pl-2" [ngClass]="{ 'sm:hidden': !fullSidebar, show: fullSidebar }">
+          {{ mode === "dark" ? "Dark" : "Light" }} mode
+        </h1>
+      </div>
+    </div>
+  </div>
+</div>
